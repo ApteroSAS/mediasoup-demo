@@ -7,6 +7,7 @@ import * as requestActions from './redux/requestActions';
 import * as stateActions from './redux/stateActions';
 import * as e2e from './e2e';
 import { Phx } from './phx/phoenix-connect';
+import UrlParse from 'url-parse';
 
 const VIDEO_CONSTRAINS =
 {
@@ -167,8 +168,8 @@ export default class RoomClient
 
 		// Protoo URL.
 		// @type {String}
-		this._protooUrl = getProtooUrl({ roomId, peerId });
 		this.roomId = roomId;
+		this.peerId = peerId;
 
 		// protoo-client Peer instance.
 		// @type {protooClient.Peer}
@@ -267,10 +268,22 @@ export default class RoomClient
 	async join()
 	{
 		const phx = new Phx();
-		let {data} = await phx.connectToRoom(this.roomId, this._displayName,"wss://alphahub.aptero.co");
+		const urlParser = new UrlParse(window.location.href, true);
+		const searchParams = (new URL(document.location)).searchParams;
+		let phxurl = "wss://alphahub.aptero.co";
+		if(window.location.hostname!=="localhost"){
+			phxurl = "wss://"+window.location.host;
+		}
+		const phxSocketUrl = searchParams.get("phx_socket_url") || phxurl;
+		urlParser.query["phx_socket_url"] = phxSocketUrl;
+		window.history.pushState('', '', urlParser.toString());
+		let {data} = await phx.connectToRoom(this.roomId, this._displayName,phxSocketUrl);
+		let url = searchParams.get("protoo_url") || data.hubs[0].host;
+		let port = searchParams.get("protoo_port") || data.hubs[0].port;
+		this._protooUrl = getProtooUrl({ roomId:this.roomId, peerId:this.peerId },url,port);
 		this.roomData = data;
 		let protooTransport;
-		if( false ){
+		if( searchParams.get("transport") ===  "WebSocketTransport"){
 			protooTransport = new protooClient.WebSocketTransport(this._protooUrl);
 		} else {
 			protooTransport = new protooClient.WebSocketIOTransport(this._protooUrl);
