@@ -51,7 +51,6 @@ export const Peer = PropTypes.shape(
 	{
 		id          : PropTypes.string.isRequired,
 		displayName : PropTypes.string,
-		device      : Device.isRequired,
 		consumers   : PropTypes.arrayOf(PropTypes.string).isRequired
 	});
 

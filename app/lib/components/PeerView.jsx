@@ -423,14 +423,6 @@ export default class PeerView extends React.Component
 							</Otherwise>
 						</Choose>
 
-						<div className='row'>
-							<span
-								className={classnames('device-icon', peer.device.flag)}
-							/>
-							<span className='device-version'>
-								{peer.device.name} {peer.device.version || null}
-							</span>
-						</div>
 					</div>
 				</div>
 

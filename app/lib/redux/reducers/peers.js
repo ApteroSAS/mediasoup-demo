@@ -50,7 +50,12 @@ const peers = (state = initialState, action) =>
 			const peer = state[peerId];
 
 			if (!peer)
-				throw new Error('no Peer found for new Consumer');
+			{
+				//throw new Error('no Peer found for new Consumer'); //Aptero
+				console.warn(action.payload);
+				console.warn(state);
+				console.warn('no Peer found for new Consumer');
+			}
 
 			const newConsumers = [ ...peer.consumers, consumer.id ];
 			const newPeer = { ...peer, consumers: newConsumers };

@@ -6,6 +6,7 @@ import * as cookiesManager from './cookiesManager';
 import * as requestActions from './redux/requestActions';
 import * as stateActions from './redux/stateActions';
 import * as e2e from './e2e';
+import { Phx } from './phx/phoenix-connect';
 
 const VIDEO_CONSTRAINS =
 {
@@ -167,6 +168,7 @@ export default class RoomClient
 		// Protoo URL.
 		// @type {String}
 		this._protooUrl = getProtooUrl({ roomId, peerId });
+		this.roomId = roomId;
 
 		// protoo-client Peer instance.
 		// @type {protooClient.Peer}
@@ -264,7 +266,16 @@ export default class RoomClient
 
 	async join()
 	{
-		const protooTransport = new protooClient.WebSocketTransport(this._protooUrl);
+		const phx = new Phx();
+		let {data} = await phx.connectToRoom(this.roomId, this._displayName,"wss://alphahub.aptero.co");
+		this.roomData = data;
+		let protooTransport;
+		if( false ){
+			protooTransport = new protooClient.WebSocketTransport(this._protooUrl);
+		} else {
+			protooTransport = new protooClient.WebSocketIOTransport(this._protooUrl);
+		}
+		// const protooTransport = new protooClient.WebSocketTransport(this._protooUrl);
 
 		this._protoo = new protooClient.Peer(protooTransport);
 
@@ -2340,6 +2351,7 @@ export default class RoomClient
 				{
 					displayName     : this._displayName,
 					device          : this._device,
+					token			: this.roomData.perms_token,
 					rtpCapabilities : this._consume
 						? this._mediasoupDevice.rtpCapabilities
 						: undefined,

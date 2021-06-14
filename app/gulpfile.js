@@ -85,7 +85,7 @@ function bundle(options)
 			entries      : PKG.main,
 			extensions   : [ '.js', '.jsx' ],
 			// required for sourcemaps (must be false otherwise).
-			debug        : process.env.NODE_ENV === 'development',
+			debug        : true,//process.env.NODE_ENV !== 'production',
 			// required for watchify.
 			cache        : {},
 			// required for watchify.
@@ -122,9 +122,9 @@ function bundle(options)
 			.pipe(source(`${PKG.name}.js`))
 			.pipe(buffer())
 			.pipe(rename(`${PKG.name}.js`))
-			.pipe(gulpif(process.env.NODE_ENV === 'production',
+			/*.pipe(gulpif(process.env.NODE_ENV === 'production',
 				uglify()
-			))
+			))TODO prod*/
 			.pipe(header(BANNER, BANNER_OPTIONS))
 			.pipe(gulp.dest(OUTPUT_DIR));
 	}
@@ -158,6 +158,7 @@ gulp.task('css', () =>
 				use      : nib(),
 				compress : process.env.NODE_ENV === 'production'
 			}))
+		.on('error', logError)
 		.on('error', logError)
 		.pipe(cssBase64(
 			{
@@ -253,7 +254,8 @@ gulp.task('live', gulp.series(
 			{
 				open      : 'external',
 				host      : config.domain,
-				startPath : '/?info=true',
+				//startPath : '/?info=true',
+				startPath : '/',
 				server    :
 				{
 					baseDir : OUTPUT_DIR

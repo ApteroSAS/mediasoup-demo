@@ -8,6 +8,7 @@ import Peer from './Peer';
 
 const Peers = ({ peers, activeSpeakerId }) =>
 {
+	console.log(peers);
 	return (
 		<div data-component='Peers'>
 			{

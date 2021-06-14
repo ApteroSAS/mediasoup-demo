@@ -99,6 +99,7 @@ async function run()
 		window.NETWORK_THROTTLE_SECRET = throttleSecret;
 	}
 
+	roomId = "fTj63Hg";
 	if (!roomId)
 	{
 		roomId = randomString({ length: 8 }).toLowerCase();
